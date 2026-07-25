@@ -4,6 +4,7 @@ import { SelectRow } from "../lib/SelectRow"
 import { Forms } from "@vendetta/ui/components"
 import { plugin } from "@vendetta";
 import { findByName } from "@vendetta/metro";
+import { React } from "@vendetta/metro/common";
 import { showToast } from "@vendetta/ui/toasts";
 
 const HelpMessage = findByName("HelpMessage");

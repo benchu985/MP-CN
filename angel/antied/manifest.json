@@ -1,15 +1,16 @@
 {
-    "name":"Cute Moodle v1.5.0（中文）",
-    "originalName": "Cute Moodle v1.5.0（中文）",
-    "description":"临时保留已删除消息及编辑记录，直到重新加载应用。",
-    "main": "index.jsx",
-    "authors": [
-        {
-            "name": "Angelw0lf",
-            "id": "692632336961110087"
-        }
-    ],
-    "vendetta": {
-    	"icon":"ic_edit_24px"
+  "name": "Cute Moodle v1.5.0（中文）",
+  "originalName": "Cute Moodle v1.5.0（中文）",
+  "description": "临时保留已删除消息及编辑记录，直到重新加载应用。",
+  "main": "index.js",
+  "authors": [
+    {
+      "name": "Angelw0lf",
+      "id": "692632336961110087"
     }
+  ],
+  "vendetta": {
+    "icon": "ic_edit_24px"
+  },
+  "hash": "3de50e55fa92b87c4d70369b1a94432526fd5a08083911e367276100ad8ba567"
 }
