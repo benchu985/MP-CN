@@ -10,26 +10,26 @@ const UserStore = findByStoreName("UserStore");
 const { ScrollView, View, Text, TouchableOpacity, TextInput, Pressable, Image, Animated } = General;
 const { FormLabel, FormArrow, FormRow, FormSection, FormDivider, FormInput } = Forms;
 
-const me = { name: 'Angel', role: 'Author & Maintainer', uuid: "692632336961110087" };
+const me = { name: 'Angel', role: '作者与维护者', uuid: "692632336961110087" };
 
 const qa   = [
-	{ name: 'Rairof', role: 'Quality Assurance', uuid: "923212189123346483" },
-	{ name: 'Moodle',   role: 'Quality Assurance', uuid: "807170846497570848" },
-	{ name: 'Catinette', role: 'Quality Assurance', uuid: "1302022854740807730" },
-	{ name: 'Win8.1VMUser', role: "Quality Assurance", uuid: "793935599702507542" }
-	// { name: 'Dave',  role: 'Quality Assurance' }
+	{ name: 'Rairof', role: '质量保证', uuid: "923212189123346483" },
+	{ name: 'Moodle',   role: '质量保证', uuid: "807170846497570848" },
+	{ name: 'Catinette', role: '质量保证', uuid: "1302022854740807730" },
+	{ name: 'Win8.1VMUser', role: "质量保证", uuid: "793935599702507542" }
+	// { name: 'Dave',  role: '质量保证' }
 ];
 const links = [
-	{ 
-		label: 'Source Code', 
-		url: 'https://github.com/angelix1/MP',
+	{
+		label: '源代码',
+		url: 'https://github.com/benchu985/MP-CN',
 	},
-	{ 
-		label: 'Tip via PayPal', 
+	{
+		label: '通过 PayPal 打赏',
 		url: 'https://paypal.me/alixymizuki',
 	},
-	{ 
-		label: 'Buy me a Ko-fi', 
+	{
+		label: '请我喝杯 Ko-fi',
 		url: 'https://ko-fi.com/angel_wolf',
 	},
 ];
@@ -52,7 +52,7 @@ export default function CreditsPage() {
 	return (<>
 		<ScrollView>
 			{/* ---- Dev ---- */}
-			<FormSection title="Developers">
+			<FormSection title="开发者">
 				<FormRow
 					label={me.name}
 					subLabel={me.role}
@@ -61,7 +61,7 @@ export default function CreditsPage() {
 			</FormSection>
 
 			{/* ---- QA ---- */}
-			<FormSection title="Testers">
+			<FormSection title="测试者">
 				{qa.map((p, i) => {
 
 					const avatarUri = getUserPng(p?.uuid)
@@ -77,12 +77,12 @@ export default function CreditsPage() {
 			<FormDivider />
 
 			{/* ---- Links ---- */}
-			<FormSection title="Support & Source">
+			<FormSection title="支持与源代码">
 				<View style={{ margin: 50 }}>
 					{links.map((l, i) => {
 
 						let finalIcon = l.icon ? (
-							l.icon?.startsWith("https") ? 
+							l.icon?.startsWith("https") ?
 							(<Image source={{ uri: l.icon }} style={{ width: 120, height: 40 }} />) :
 							(<FormRow.Icon source={getAssetIDByName(l.icon)}/>)
 						) :	null;

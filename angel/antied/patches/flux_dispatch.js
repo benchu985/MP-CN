@@ -85,7 +85,7 @@ export default deletedMessageArray => before("dispatch", FluxDispatcher, args =>
 				ev.optimistic = false;
 				ev.sendMessageOptions = {};
 				ev.isPushNotification = false;
-				
+
 
 				deletedMessageArray.set(ev.id, { message: args, stage: 1 });
 
@@ -107,9 +107,9 @@ export default deletedMessageArray => before("dispatch", FluxDispatcher, args =>
 				const orig = MessageStore.getMessage(chId, id) || ChannelMessages.get(chId)?.get(id);
 
 				if (!orig?.author?.id || !orig.author.username) return;
-				
+
 				if (!orig.content && !orig.attachments?.length && !orig.embeds?.length) return;
-				
+
 				if (!msg.content || msg.content === orig.content) return;
 
 				if (cfg.inputs?.ignoredUserList?.length) {
@@ -127,26 +127,26 @@ export default deletedMessageArray => before("dispatch", FluxDispatcher, args =>
 
 				let prefix = `${editedTag}`;
 
-				prefix = time ? 
-					tsPos ? 
-						`${time} ${prefix}\n\n` : `${prefix} ${time}\n\n` : 
+				prefix = time ?
+					tsPos ?
+						`${time} ${prefix}\n\n` : `${prefix} ${time}\n\n` :
 					`${prefix}\n\n`;
 
-  
+
 				ev.message = {
 					...msg,
 					content: `${orig.content} ${prefix}${msg.content}`,
 					guild_id: ChannelStore.getChannel(chId)?.guild_id ?? msg.guild_id,
 					edited_timestamp: "invalid_timestamp",
 					message_reference: msg?.message_reference || orig?.messageReference || null,
-					
+
 				};
 
 				return args;
 			}
-			
+
 		} catch (e) {
-			showToast("[ANTIED] FluxDispatcher crash – check logs");
+			showToast("[ANTIED] FluxDispatcher 发生错误，请查看日志。");
 			console.error("[ANTIED] Flux patch\n", e);
 		}
 	}

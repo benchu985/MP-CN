@@ -15,13 +15,13 @@ export default function NerdComponent({ stx }) {
 	useProxy(storage)
 
 	const [plugUri, setPlugUri] = React.useState(plugin.id)
-	
+
 	return (<>
-		<HelpMessage messageType={0}>Changing the plugin URL may redirect future updates to the new source, or prevent updates entirely.</HelpMessage>
+		<HelpMessage messageType={0}>更改插件网址可能会将后续更新重定向到新来源，或导致无法更新。</HelpMessage>
 		<FormInput
-			title="Change Plugin URL"
+			title="更改插件网址"
 			keyboardType="default"
-			placeholder="https://angelix1.github.io/MP/angel/antied"
+			placeholder="https://benchu985.github.io/MP-CN/angel/antied"
 			value={plugUri}
 			onChange={(val) => {
 				plugin.id = val?.toString()
@@ -30,26 +30,26 @@ export default function NerdComponent({ stx }) {
 		/>
 		<FormDivider />
 		<FormRow
-			label="Restore original URL"
-			subLabel="Click to switch to the production build URL (will exit debug version)"
+			label="恢复原始网址"
+			subLabel="点击切换到正式版网址（将退出调试版本）。"
 			onPress={() => {
-				plugin.id = "https://angelix1.github.io/MP/angel/antied";
-				showToast("Plugin URL source restored to original URL.")
+				plugin.id = "https://benchu985.github.io/MP-CN/angel/antied";
+				showToast("插件网址已恢复为原始网址。")
 			}}
 		/>
 		<FormDivider />
 		<FormRow
-			label="Restore original plugin name"
-			subLabel="Click to reset to the default name"
+			label="恢复原始插件名称"
+			subLabel="点击重置为默认名称。"
 			onPress={() => {
 				plugin.manifest.name = plugin.manifest.originalName;
-				showToast("Plugin Name restored to original name.")
+				showToast("插件名称已恢复为原始名称。")
 			}}
 		/>
 		<FormDivider />
 		<FormRow
-			label="Debug"
-			subLabel="Enable general console logging"
+			label="调试"
+			subLabel="启用常规控制台日志"
 			style={{ paddingBottom: 20 }}
 			trailing={
 				<FormSwitch
@@ -62,8 +62,8 @@ export default function NerdComponent({ stx }) {
 		/>
 		<FormDivider />
 		<FormRow
-			label="Debug updateRows"
-			subLabel="Enable updateRows console logging"
+			label="调试 updateRows"
+			subLabel="启用 updateRows 控制台日志"
 			style={{ paddingBottom: 20 }}
 			trailing={
 				<FormSwitch

@@ -16,7 +16,7 @@ export default function IgnoreListComponent() {
 
 	const listIgnore = () => {
 		navigation.push("VendettaCustomPage", {
-			title: `List of Ignored Users`,
+			title: `已忽略用户列表`,
 			render: () => <ListUsers/>
 		})
 	}
@@ -24,8 +24,8 @@ export default function IgnoreListComponent() {
 
 	return (<>
 		<FormRow
-			label="Add User to List"
-			subLabel="List of ignored users for the plugin"
+			label="添加用户到列表"
+			subLabel="插件将忽略这些用户"
 			leading={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName("ic_members")} />}
 			onPress={listIgnore}
 			trailing={

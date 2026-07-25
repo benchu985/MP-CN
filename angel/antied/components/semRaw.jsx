@@ -16,17 +16,17 @@ const { FormRow, FormDivider, ScrollView } = Forms
 
 export default function SemRawComponent() {
 	useProxy(storage)
-	
+
 	return (<>
 		<ScrollView>
-			<FormRow label="Choose Color"/>
+			<FormRow label="选择颜色"/>
 			{
 				semRaw.map((NAME, i) => {
 					return (<>
-						<SelectRow 
-							label={NAME} 
-							selected={storage.colors.semRawColorPrefix == NAME} 
-							onPress={() => storage.colors.semRawColorPrefix = NAME} 
+						<SelectRow
+							label={NAME}
+							selected={storage.colors.semRawColorPrefix == NAME}
+							onPress={() => storage.colors.semRawColorPrefix = NAME}
 						/>
 						{i !== semRaw.length - 1 && <FormDivider />}
 					</>)

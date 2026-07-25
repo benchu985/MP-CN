@@ -10,25 +10,25 @@ const togglePatch = [
 	{
 		id: "enableMD",
 		default: true,
-		label: "Toggle Message Delete",
-		subLabel: "Logs deleted message",
+		label: "开关消息删除记录",
+		subLabel: "记录已删除消息",
 	},
 	{
 		id: "enableMU",
 		default: true,
-		label: "Toggle Message Update",
-		subLabel: "Logs edited message",
+		label: "开关消息编辑记录",
+		subLabel: "记录已编辑消息",
 	},
 ]
 
 export default function PatchesComponent({ styles }) {
 	useProxy(storage)
-	
+
 	return (<>
 		<View style={[styles.subText]}>{
 			togglePatch?.map((obj, index) => {
 				return (<>
-					<FormRow 
+					<FormRow
 						label={obj?.label}
 						subLabel={obj?.subLabel}
 						leading={obj?.icon && <FormIcon style={{ opacity: 1 }} source={getAssetIDByName(obj?.icon)} />}
@@ -44,7 +44,7 @@ export default function PatchesComponent({ styles }) {
 					{index !== togglePatch?.length - 1 && <FormDivider />}
 				</>)
 			})
-		}				
+		}
 		</View>
 	</>)
 }

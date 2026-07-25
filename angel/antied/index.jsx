@@ -62,9 +62,9 @@ makeDefaults(storage, {
 		semRawColorPrefix: "semanticColors.TEXT_BRAND",
 	},
 	inputs: {
-		deletedMessageBuffer: "This message is deleted",
+		deletedMessageBuffer: "此消息已删除",
 		editedMessageBuffer: "`[ EDITED ]`",
-		historyToast: "[ANTI ED] History Removed",
+		historyToast: "[ANTI ED] 历史记录已清除",
 		ignoredUserList: [],
 		customPluginName: (plugin?.manifest?.name || "ANTIED"),
 		customIndicator: ""
@@ -116,8 +116,8 @@ export default {
 		}
 		catch(err) {
 			logger.info("[ANTIED], Crash On Load.\n\n", err)
-			showToast("[ANTIED], Crashing On Load. Please check debug log for more info.")
-			stopPlugin(id)		
+			showToast("[ANTIED] 加载时发生错误，请查看调试日志了解详情。")
+			stopPlugin(id)
 		};
 
 		intervalPurge = setInterval(() => {
@@ -133,16 +133,16 @@ export default {
 		}, 15 * 60 * 1000);  // 15 min check to purge caches
 
 		// apply custom name if override enabled
-		plugin.manifest.name = storage?.switches?.useCustomPluginName ? 
-			storage?.inputs?.customPluginName : 
+		plugin.manifest.name = storage?.switches?.useCustomPluginName ?
+			storage?.inputs?.customPluginName :
 			plugin?.manifest?.name;
 
 	},
 	onUnload: () => {
 		isEnabled = false;
-        
+
 		clearInterval(intervalPurge);
-        
+
         unpatch?.()
 
         // cleaning records

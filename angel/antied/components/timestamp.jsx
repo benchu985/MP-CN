@@ -6,50 +6,50 @@ import { Forms } from "@vendetta/ui/components"
 const timestamps = [
 	{
 		type: "t",
-		label: "Short Time",
+		label: "短时间",
 		subLabel: "16:20",
 	},
 	{
 		type: "T",
-		label: "Long Time",
+		label: "长时间",
 		subLabel: "16:20:30",
 	},
 	{
 		type: "d",
-		label: "Short Date",
+		label: "短日期",
 		subLabel: "20/04/2021",
 	},
 	{
 		type: "D",
-		label: "Long Date",
-		subLabel: "20 April 2021",
+		label: "长日期",
+		subLabel: "2021年4月20日",
 	},
 	{
 		type: "f",
-		label: "Short Date/Time",
-		subLabel: "20 April 2021 16:20",
+		label: "短日期/时间",
+		subLabel: "2021年4月20日 16:20",
 	},
 	{
 		type: "F",
-		label: "Long Date/Time",
-		subLabel: "Tuesday, 20 April 2021 16:20",
+		label: "长日期/时间",
+		subLabel: "2021年4月20日 星期二 16:20",
 	},
 	{
 		type: "R",
-		label: "Relative Time",
-		subLabel: "2 months ago",
+		label: "相对时间",
+		subLabel: "2 个月前",
 	},
 ]
 
 const timestampsPosition = [
 	{
-		label: "Before",
-		subLabel: "Old Message (2 minutes ago) [Edited] New Message",
+		label: "前置",
+		subLabel: "旧消息（2 分钟前）[已编辑] 新消息",
 		key: "BEFORE"
 	},
 	{
-		label: "After",
-		subLabel: "Old Message [Edited] (2 minutes ago) New Message",
+		label: "后置",
+		subLabel: "旧消息 [已编辑]（2 分钟前）新消息",
 		key: "AFTER"
 	},
 ]
@@ -60,32 +60,32 @@ const { FormRow, FormDivider } = Forms
 
 export default function TimestampComponent() {
 	useProxy(storage)
-	
+
 	return (<>
-		<FormRow label="Timestamp Style"/>
+		<FormRow label="时间戳样式"/>
 		{
 			timestamps.map(({ type, label, subLabel }, i) => {
 				return (<>
-					<SelectRow 
-						label={label} 
-						subLabel={`Example: ${subLabel}`}
-						selected={storage.switches.timestampStyle == type} 
-						onPress={() => storage.switches.timestampStyle = type} 
+					<SelectRow
+						label={label}
+						subLabel={`示例：${subLabel}`}
+						selected={storage.switches.timestampStyle == type}
+						onPress={() => storage.switches.timestampStyle = type}
 					/>
 					{i !== timestamps.length - 1 && <FormDivider />}
 				</>)
 			})
 		}
 		<FormDivider />
-		<FormRow label="Timestamp Position"/>
+		<FormRow label="时间戳位置"/>
 		{
 			timestampsPosition.map(({ key, label, subLabel }, i) => {
 				return (<>
-					<SelectRow 
-						label={label} 
-						subLabel={`Example: ${subLabel}`}
-						selected={storage.misc?.timestampPos == key} 
-						onPress={() => storage.misc.timestampPos = key} 
+					<SelectRow
+						label={label}
+						subLabel={`示例：${subLabel}`}
+						selected={storage.misc?.timestampPos == key}
+						onPress={() => storage.misc.timestampPos = key}
 					/>
 					{i !== timestampsPosition.length - 1 && <FormDivider />}
 				</>)

@@ -39,7 +39,7 @@ const styles = stylesheet.createThemedStyleSheet({
 		marginBottom: 10,
 		letterSpacing: 0.25,
 		fontFamily: constants.Fonts.DISPLAY_NORMAL,
-		fontSize: 12    
+		fontSize: 12
 	},
 	input: {
 		fontSize: 16,
@@ -60,14 +60,14 @@ const styles = stylesheet.createThemedStyleSheet({
 		marginBottom: 20,
 	},
 	row: {
-		flexDirection: "row", 
+		flexDirection: "row",
 		height: 80,
-		width: "90%", 
+		width: "90%",
 		marginBottom: 20
 	},
 	border: {
 		borderRadius: 12
-	},	
+	},
 	lnBorder: {
 		borderRadius: 12,
 		overflow: "hidden"
@@ -81,7 +81,7 @@ const styles = stylesheet.createThemedStyleSheet({
 		shadowRadius: 24.00,
 		elevation: 16,
 	},
-	lnShadow: { 
+	lnShadow: {
 		flex: 1,
 		margin: "1%",
 		shadowColor: "#b8ff34"
@@ -96,7 +96,7 @@ const styles = stylesheet.createThemedStyleSheet({
 	}
 });
 
-export default function SettingPage() {  
+export default function SettingPage() {
 	useProxy(storage);
 
 	const [animation] = React.useState(new Animated.Value(0));
@@ -106,7 +106,7 @@ export default function SettingPage() {
 
 	const openCreditPage = () => {
 		navigation.push("VendettaCustomPage", {
-			title: `Credits & Support`,
+			title: `鸣谢与支持`,
 			render: () => React.createElement(CreditsPage, { styles: styles })
 		})
 	}
@@ -137,18 +137,18 @@ export default function SettingPage() {
 		}),
 	};
 
-	const createChild = (id, title, label, subLabel, props, propsData) => { 
+	const createChild = (id, title, label, subLabel, props, propsData) => {
 		return { id, title, label, subLabel, props, propsData }
 	}
 
 	const ComponentChildren = [
-		createChild("patches", "Plugin Patcher", "Show Patches", "Toggle what the plugin patch", PatchesComponent, styles),
-		createChild("customize", "Customization", "Customize", null, CustomizationComponent, styles),
-		createChild("text", "Text Variables", "Customize Texts", null, TextComponent, styles),
-		createChild("timestamp", "Timestamp", "Timestamp Styles", null, TimestampComponent, styles),
-		createChild("colorpick", "Colors", "Customize Colors", null, ColorPickComponent, styles),
-		createChild("ingorelist", "Ignore List", "Show Ignore List", null, IgnoreListComponent, null),
-		createChild("nerd", "Nerd Stuff", "Open Sesami", null, NerdComponent, null, styles),
+		createChild("patches", "插件补丁", "显示补丁选项", "开关插件要应用的补丁", PatchesComponent, styles),
+		createChild("customize", "自定义", "自定义", null, CustomizationComponent, styles),
+		createChild("text", "文本变量", "自定义文本", null, TextComponent, styles),
+		createChild("timestamp", "时间戳", "时间戳样式", null, TimestampComponent, styles),
+		createChild("colorpick", "颜色", "自定义颜色", null, ColorPickComponent, styles),
+		createChild("ingorelist", "忽略列表", "显示忽略列表", null, IgnoreListComponent, null),
+		createChild("nerd", "高级选项", "打开高级选项", null, NerdComponent, null, styles),
 	]
 
 	// const currentOS = ReactNative?.Platform?.OS || null;
@@ -156,7 +156,7 @@ export default function SettingPage() {
 	const entireUIList = (<>
 		<View style={[ styles.lnBorder, bgStyle, styles.darkMask ]}>
 			{
-				ComponentChildren.map((element) => {				
+				ComponentChildren.map((element) => {
 					return (<>
 						<FormSection title={element?.title}>
 							<FormRow
@@ -166,18 +166,18 @@ export default function SettingPage() {
 									storage.setting[element?.id] = !storage.setting[element?.id];
 								}}
 								trailing={
-									(storage.setting[element?.id] == true) ? 
-									(<FormRow.Icon source={getAssetIDByName("ic_arrow_down")} />) : 
+									(storage.setting[element?.id] == true) ?
+									(<FormRow.Icon source={getAssetIDByName("ic_arrow_down")} />) :
 									(<FormRow.Icon source={getAssetIDByName("ic_arrow_right")} />)
 								}
 							/>
 							{
-								storage.setting[element.id] && 
+								storage.setting[element.id] &&
 								element.props && (
-									<View style={{ 
-										margin: 5, 
-										padding: 10, 
-										borderRadius: 10, 
+									<View style={{
+										margin: 5,
+										padding: 10,
+										borderRadius: 10,
 										backgroundColor: "rgba(0, 0, 0, 0.15)"
 									}}>
 										{React.createElement(element.props, { styles: element.propsData })}
@@ -188,12 +188,12 @@ export default function SettingPage() {
 					</>)
 				})
 			}
-			
+
 			{
 				bugs && (
-					<FormSection title="Known Bugs">
+					<FormSection title="已知问题">
 						<FormRow
-							label="Click to show those Lady Bug"
+							label="点击查看已知问题"
 							style={{padding: 2 }}
 							onPress={() => {
 								setKnownBugOpen(!isKnownBugOpen)
@@ -202,8 +202,8 @@ export default function SettingPage() {
 						{
 
 							isKnownBugOpen && (
-								<View style={{ 
-									margin: 5, 
+								<View style={{
+									margin: 5,
 									padding: 5,
 									borderRadius: 10,
 									backgroundColor: "rgba(59, 30, 55, 0.15)"
@@ -221,7 +221,7 @@ export default function SettingPage() {
 									}
 									</View>
 							)
-						}						
+						}
 					</FormSection>
 				)
 			}
@@ -230,21 +230,21 @@ export default function SettingPage() {
 
 	return (<>
 		<ScrollView>
-			<LinearGradient 
+			<LinearGradient
 				start={{x: 0.8, y: 0}}
 				end={{x: 0, y: 0.8}}
 				colors={[ "#b8ff34", "#4bff61", "#44f6ff", "#4dafff", "#413dff", "#d63efd" ]}
 				style={[ styles.lnBorder, styles.shadowTemplate, styles.lnShadow, styles.padBot ]}
 			>
 				<FormRow
-					label="CREDITS"
-					subLabel="See the people behind the plugin and ways to support its development."
+					label="鸣谢"
+					subLabel="查看插件贡献者及支持开发的方式。"
 					onPress={openCreditPage}
 					style={[ styles.lnBorder, bgStyle, styles.darkMask ]}
 					trailing={<FormRow.Icon source={getAssetIDByName("ic_arrow_right")} />}
 				/>
 
-				{entireUIList}	
+				{entireUIList}
 			</LinearGradient>
 			<View style={{ height: 60 }} />
 		</ScrollView>

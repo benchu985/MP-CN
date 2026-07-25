@@ -40,12 +40,12 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 
 						const buttons = findInReactTree(comp, c => c?.find?.(someFunc))
 						if (!buttons) return comp;
-						
+
 						const position = Math.max(
-							buttons.findIndex(someFunc), 
+							buttons.findIndex(someFunc),
 							buttons.length - 1
 						);
-						
+
 						let originalMessage = null;
 
 						if (message?.channel_id && message?.id) {
@@ -68,11 +68,11 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 
 						if(checkIfBufferExist) {
 							const targetPos = position || 1;
-							
+
 							buttons.splice(targetPos, 0, (
 								<ActionSheetRow
-									label="Remove Edit History"
-									subLabel={`Added by ${stripVersions(plugin?.manifest?.name) || "ANTIED"}`}
+									label="清除编辑历史"
+									subLabel={`由 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} 添加`}
 									icon={<ActionSheetRow.Icon source={getAssetIDByName("ic_edit_24px")}/>}
 									onPress={() => {
 
@@ -93,7 +93,7 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 										/*
 										console.log(message.embeds)
 
-										const messageEmbeds = message?.embeds?.map(embedData => {                                            
+										const messageEmbeds = message?.embeds?.map(embedData => {
 											const rawHSLA = embedData?.color?.replace(/.+\(/, "")?.replace(/%/g, "")?.replace(")", "")
 
 											const split = rawHSLA?.split(', ')
@@ -102,7 +102,7 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 												setOpacity(
 													colorConverter.HSLtoHEX(
 														split[0], split[1], split[2]
-													), 
+													),
 													split[3]
 												)
 											}`)
@@ -144,22 +144,22 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 						}
 
 						if(storage.debug) console.log(
-							`[ANTIED ActionSheet]`, 
-							"useEphemeralForDeleted", !storage?.switches?.useEphemeralForDeleted, 
+							`[ANTIED ActionSheet]`,
+							"useEphemeralForDeleted", !storage?.switches?.useEphemeralForDeleted,
 							"msgExist?", Boolean(deletedMessageArray.has(message.id))
 						);
 
 						if(!storage?.switches?.useEphemeralForDeleted && deletedMessageArray.has(message.id)) {
 							const targetPos = position || 1;
-							
+
 							buttons.splice(targetPos, 0, (
 								<ActionSheetRow
-									label="Remove Deleted Message"
-									subLabel={`Added by ${stripVersions(plugin?.manifest?.name) || "ANTIED"}`}
+									label="移除已删除消息"
+									subLabel={`由 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} 添加`}
 									isDestructive={true}
 									icon={<ActionSheetRow.Icon source={getAssetIDByName("ic_edit_24px")}/>}
 									onPress={() => {
-										FluxDispatcher.dispatch({ 
+										FluxDispatcher.dispatch({
 											type: 'MESSAGE_DELETE',
 											guildId: ChannelStore.getChannel(originalMessage.channel_id).guild_id,
 											id: message?.id,
@@ -169,7 +169,7 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 
 										ActionSheet.hideActionSheet()
 										if(storage?.inputs?.historyToast?.length > 0 || storage?.inputs?.historyToast != "") {
-											showToast(`[ANTIED] Message Removed`, getAssetIDByName("ic_edit_24px"))
+											showToast(`[ANTIED] 消息已移除`, getAssetIDByName("ic_edit_24px"))
 										}
 									}
 								}/>
@@ -177,14 +177,14 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 						}
 					}
 					catch (e) {
-						showToast("[ANTIED] Crash on ActionSheet, check debug log for more info")
+						showToast("[ANTIED] 操作菜单发生错误，请查看调试日志了解详情。")
 						console.error("[ANTIED Error > ActionSheet:Component Patch\n", e)
 					}
 				})
 			})
 		}
 		catch (e) {
-			showToast("[ANTIED] Crash on ActionSheet, check debug log for more info")
+			showToast("[ANTIED] 操作菜单发生错误，请查看调试日志了解详情。")
 			console.error("[ANTIED Error > ActionSheet Patch\n", e)
 		}
 	}

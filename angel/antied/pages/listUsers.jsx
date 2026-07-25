@@ -34,7 +34,7 @@ const styles = stylesheet.createThemedStyleSheet({
     basicPad: {
         paddingRight: 10,
         marginBottom: 10,
-        letterSpacing: 0.25,        
+        letterSpacing: 0.25,
     },
     header: {
         color: semanticColors.HEADER_SECONDARY,
@@ -46,7 +46,7 @@ const styles = stylesheet.createThemedStyleSheet({
         color: semanticColors.TEXT_POSITIVE,
         fontFamily: constants.Fonts.DISPLAY_NORMAL,
         paddingLeft: "4%",
-        fontSize: 18  
+        fontSize: 18
     },
     flagsText: {
         color: semanticColors.HEADER_SECONDARY,
@@ -61,14 +61,14 @@ const styles = stylesheet.createThemedStyleSheet({
     },
     placeholder: {
       color: semanticColors.INPUT_PLACEHOLDER_TEXT
-    } 
+    }
 });
 
 
 const placeholder = 'Missing_No';
 
 export default function ListUsers() {
-    
+
     useProxy(storage);
     let [newUser, setNewUser] = React.useState("")
 
@@ -86,9 +86,9 @@ export default function ListUsers() {
 
                 if(validUser) {
                     users.push({ id: validUser?.id, username: '', showUser: false, isWebhook: false })
-                } 
+                }
                 else {
-                    return showToast('Invalid User Id');
+                    return showToast('无效的用户 ID');
                 }
             }
             else {
@@ -97,28 +97,28 @@ export default function ListUsers() {
 
             setNewUser("")
             navigation.push("VendettaCustomPage", {
-                title: `Adding User to Ignore List`,
+                title: `添加用户到忽略列表`,
                 render: () => <AddUser index={users?.length - 1} />
             })
         }
     };
 
-    
+
     return (<>
         <ScrollView style={{ flex: 1 }} >
             <FormSection style={[styles.header, styles.basicPad]}>
                 <View style={[styles.header, styles.sub]}>
                 { users.length > 0 && (
                     <FormRow
-                        label="Clear List"
+                        label="清空列表"
                         trailing={addIcon(Trash, true)}
                         onPress={() => {
                             if (users.length !== 0) {
                                 showConfirmationAlert({
-                                    title: 'Hol up, wait a minute!',
-                                    content: `This will removes in total ${users.length} users from ignore list.`,
-                                    confirmText: 'Ye',
-                                    cancelText: 'Nah',
+                                    title: '请稍等！',
+                                    content: `这将从忽略列表移除共 ${users.length} 名用户。`,
+                                    confirmText: '确定',
+                                    cancelText: '取消',
                                     confirmColor: "brand",
                                     onConfirm: () => {
                                         storage.inputs.ignoredUserList = [];
@@ -133,11 +133,11 @@ export default function ListUsers() {
                     users?.map((comp, i) => {
                         return (<>
                             <FormRow
-                                label={comp?.username || comp?.id || 'No Data'}
+                                label={comp?.username || comp?.id || '无数据'}
                                 trailing={<FormArrow />}
-                                onPress={() => 
+                                onPress={() =>
                                     navigation.push("VendettaCustomPage", {
-                                        title: "Editing User",
+                                        title: "编辑用户",
                                         render: () => <AddUser index={i} />
                                     })
                                 }
@@ -151,7 +151,7 @@ export default function ListUsers() {
                         <TextInput
                             value={newUser}
                             onChangeText={setNewUser}
-                            placeholder="User ID or Username"
+                            placeholder="用户 ID 或用户名"
                             placeholderTextColor={styles.placeholder.color}
                             selectionColor={constants.Colors.PRIMARY_DARK_100}
                             onSubmitEditing={addNewUser}
@@ -160,7 +160,7 @@ export default function ListUsers() {
                         />
                     }
                     trailing={
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             onPress={addNewUser}>
                                 {addIcon(Add, true)}
                         </TouchableOpacity>
@@ -168,7 +168,7 @@ export default function ListUsers() {
                 />
                 </View>
             </FormSection>
-        </ScrollView>  
+        </ScrollView>
     </>)
 }
 

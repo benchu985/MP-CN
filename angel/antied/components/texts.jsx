@@ -10,33 +10,33 @@ const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, Form
 const customizedableTexts = [
 	{
 		id: "deletedMessageBuffer",
-		title: "Customize Deleted Message",
+		title: "自定义已删除消息文本",
 		type: "default",
-		placeholder: "This message is deleted",
+		placeholder: "此消息已删除",
 	},
 	{
 		id: "editedMessageBuffer",
-		title: "Customize Edited Separator",
+		title: "自定义编辑分隔符",
 		type: "default",
 		placeholder: "`[ EDITED ]`",
 	},
 	{
 		id: "historyToast",
-		title: "Customize Remove History Toast Message",
+		title: "自定义清除历史提示文本",
 		type: "default",
-		placeholder: "History Removed",
+		placeholder: "历史记录已清除",
 	},
 	{
 		id: "customIndicator",
-		title: "Customize Ephemeral 'Only You Can See This' Indicator (if useIndicatorForDeletedMessage enabled this feature be overriden)",
+		title: "自定义临时消息“仅你可见”提示（启用已删除消息提示标记后将覆盖此设置）",
 		type: "default",
-		placeholder: "Only you can see this • ",
+		placeholder: "仅你可见 • ",
 	}
 ]
 
 export default function TextComponent({ styles }) {
 	useProxy(storage)
-	
+
 	return (<>
 		<View style={[styles.subText]}>
 		{
@@ -54,7 +54,7 @@ export default function TextComponent({ styles }) {
 			})
 		}
 		<FormInput
-			title="Customize Plugin Name"
+			title="自定义插件名称"
 			keyboardType="default"
 			placeholder={storage?.inputs?.customPluginName || plugin?.manifest?.name || "ANTIED"}
 			value={storage?.inputs?.customPluginName}
@@ -65,13 +65,13 @@ export default function TextComponent({ styles }) {
 		/>
 		<FormDivider/>
 		<FormRow
-			label={`Current Used Icon - ${storage?.misc?.editHistoryIcon || "ic_edit_24px"}`}
-			subLabel="Icon for Message History Removed toast"
+			label={`当前使用图标 - ${storage?.misc?.editHistoryIcon || "ic_edit_24px"}`}
+			subLabel="“历史记录已清除”提示使用的图标"
 			trailing={<FormIcon style={{ opacity: 1 }} source={getAssetIDByName(storage?.misc?.editHistoryIcon)} />}
 		/>
 		<FormDivider/>
 		<FormInput
-			title="Icon Name"
+			title="图标名称"
 			keyboardType="default"
 			placeholder="ic_edit_24px"
 			value={storage?.misc?.editHistoryIcon || "ic_edit_24px"}

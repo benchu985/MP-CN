@@ -14,79 +14,79 @@ const customizeableSwitches = [
 	{
 		id: "minimalistic",
 		default: true,
-		label: "Minimalistic Settings",
-		subLabel: "Removes all Styling (Enabled by Default)",
+		label: "极简设置",
+		subLabel: "移除全部样式（默认启用）",
 	},
 	{
 		id: "useBackgroundColor",
 		default: false,
-		label: "Enable Background Color",
-		subLabel: "Background Color for Deleted Message, similiar to Mention but Customizeable",
+		label: "启用背景颜色",
+		subLabel: "为已删除消息添加可自定义的背景颜色，类似提及高亮。",
 	},
 	{
 		id: "useSemRawColors",
 		default: false,
-		label: "Use Semantic/Raw Color",
-		subLabel: "Use Semantic/Raw Color instead of Custom Color for Background Color, doesn't applied to GutterColor",
+		label: "使用语义/原始颜色",
+		subLabel: "背景使用语义/原始颜色而非自定义颜色；不影响侧栏颜色。",
 	},
 	{
 		id: "ignoreBots",
 		default: false,
-		label: "Ignore Bots",
-		subLabel: "Ignore bot deleted messages.",
+		label: "忽略机器人",
+		subLabel: "忽略机器人的已删除消息。",
 	},
 	{
 		id: "removeDismissButton",
 		default: false,
-		label: "Remove Dissmiss Message",
-		subLabel: "Remove clickable Dismiss Message text from deleted ephemeral messages.",
+		label: "移除“关闭消息”",
+		subLabel: "移除已删除临时消息中可点击的“关闭消息”文字。",
 	},
 	{
 		id: "addTimestampForEdits",
 		default: false,
-		label: "Add Edit Timestamp",
-		subLabel: "Add Timestamp for edited messages.",
+		label: "添加编辑时间戳",
+		subLabel: "为已编辑消息添加时间戳。",
 	},
 	{
 		id: "useEphemeralForDeleted",
 		default: true,
-		label: "Use Ephemeral for Deleted",
-		subLabel: "When messages got deleted it'll use ephemeral instead of normal message (Enabled by Default).",
+		label: "已删除消息使用临时消息",
+		subLabel: "消息删除后使用临时消息而不是普通消息（默认启用）。",
 	},
 	{
 		id: "useIndicatorForDeleted",
 		default: false,
-		label: "use Indicator For 'This Message is Deleted'",
-		subLabel: "Use 'only you can see this' for deleted message info, instead of (edited)",
+		label: "为“此消息已删除”使用提示标记",
+		subLabel: "已删除消息显示“仅你可见”提示，而不是“已编辑”。",
 	},
 	{
 		id: "overrideIndicator",
 		default: false,
-		label: "Remove Ephemeral Indicator",
-		subLabel: "When messages got deleted it'll have indicator under the text like 'only you can see this' and this remove those.",
+		label: "移除临时消息提示",
+		subLabel: "消息删除后，文字下方会显示“仅你可见”等提示；此选项会移除该提示。",
 	},
 	{
 		id: "useCustomPluginName",
 		default: false,
-		label: "Override Plugin Name with custom one",
-		subLabel: "Replace plugin name with custom one when enabled"
+		label: "使用自定义名称覆盖插件名称",
+		subLabel: "启用后以自定义名称替代插件名称"
 	}
 ]
 
 export default function CustomizationComponent({ styles }) {
 	useProxy(storage)
-	
+
 	return (<>
-		<View style={[styles.subText]}>		
+		<View style={[styles.subText]}>
 		{
 			storage?.switches.minimalistic && (
-				<HelpMessage messageType={0}>To use styling, disable "Minimalistic" option</HelpMessage>
+				<HelpMessage messageType={0}>若要使用样式，请关闭“极简设置”选项。</HelpMessage>
 			)
 		}
 		{
 			customizeableSwitches?.map((obj, index) => {
 				return (<>
-					<FormRow 
+					<FormRow
 						label={obj?.label}
 						subLabel={obj?.subLabel}
 						leading={obj?.icon && <FormIcon style={{ opacity: 1 }} source={getAssetIDByName(obj?.icon)} />}

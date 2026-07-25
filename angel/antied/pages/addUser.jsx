@@ -31,7 +31,7 @@ const styles = stylesheet.createThemedStyleSheet({
 	basicPad: {
 		paddingRight: 10,
 		marginBottom: 10,
-		letterSpacing: 0.25,        
+		letterSpacing: 0.25,
 	},
 	header: {
 		color: semanticColors.HEADER_PRIMARY,
@@ -44,7 +44,7 @@ const styles = stylesheet.createThemedStyleSheet({
 		color: semanticColors.TEXT_POSITIVE,
 		fontFamily: constants.Fonts.DISPLAY_NORMAL,
 		paddingLeft: "4%",
-		fontSize: 18  
+		fontSize: 18
 	},
 	flagsText: {
 		color: semanticColors.HEADER_SECONDARY,
@@ -110,7 +110,7 @@ export default function AddUser({ index }) {
 	const onPressIn = () => Animated.spring(animatedButtonScale, { toValue: 1.1, duration: 10, useNativeDriver: true }).start();
 
 	const onPressOut = () => Animated.spring(animatedButtonScale, { toValue: 1, duration: 250, useNativeDriver: true }).start();
-	
+
 	const animatedScaleStyle = {
 		transform: [
 			{
@@ -131,9 +131,9 @@ export default function AddUser({ index }) {
 	return (<>
 		<ScrollView>
 			<View style={[styles.basicPad, styles.sub]}>
-				<FormSection title="User Setting" style={[styles.header]}>
+				<FormSection title="用户设置" style={[styles.header]}>
 					<FormRow
-						label="Find User Id or Username"
+						label="查找用户 ID 或用户名"
 						leading={addIcon('ic_search')}
 						onPress={() => {
 							if(user && !object.username?.length) {
@@ -141,27 +141,27 @@ export default function AddUser({ index }) {
 							}
 							else if(user && !object.id?.length) {
 								object.id = user.id;
-							} 
+							}
 							else {
-								showToast('Cannot find User Id/Username.')
+								showToast('找不到用户 ID 或用户名。')
 							}
 						}}
 					/>
 					<FormInput
-						title="User Username | Case Sensitive"
-						placeholder="Missing No"
+						title="用户名｜区分大小写"
+						placeholder="未填写"
 						value={object?.username}
 						onChange={(v) => object.username = v}
 					/>
 					<FormInput
-						title="User Id"
-						placeholder="Missing No"
+						title="用户 ID"
+						placeholder="未填写"
 						value={object?.id}
 						onChange={(v) => object.id = v}
 					/>
-					<FormRow 
-						label='User is webhook?'
-						subLabel='User is webhook or system, and not BOT or Normal User.'
+					<FormRow
+						label='用户是 Webhook 吗？'
+						subLabel='该用户是 Webhook 或系统用户，而非机器人或普通用户。'
 						leading={addIcon('ic_webhook_24px')}
 						trailing={
 							<FormSwitch
@@ -173,7 +173,7 @@ export default function AddUser({ index }) {
 				</FormSection>
 				{ user &&(
 					<View style={[styles.container, { paddingBottom: 10 }]}>
-						<TouchableOpacity 
+						<TouchableOpacity
 							onPress={() => Profiles.showUserProfile?.({ userId: user?.id })}
 							onPressIn={onPressIn}
 							onPressOut={onPressOut}
@@ -181,32 +181,32 @@ export default function AddUser({ index }) {
 							<Animated.View style={animatedScaleStyle}>
 								<Image
 									source={
-										{ 
+										{
 											uri: (
-												user?.getAvatarURL?.()?.replace?.("webp", "png") || 
+												user?.getAvatarURL?.()?.replace?.("webp", "png") ||
 												"https://cdn.discordapp.com/embed/avatars/2.png"
-											) 
+											)
 										}
 									}
-									style={{ 
-										width: 128, 
+									style={{
+										width: 128,
 										height: 128,
 										borderRadius: 10,
 									}}
-								/>                                
+								/>
 							</Animated.View>
 						</TouchableOpacity>
-						
+
 						<View style={styles.textContainer}>
 							<TouchableOpacity onPress={() => Profiles.showUserProfile({ userId: user?.id })}>
-								<Text style={[styles.mainText, styles.header]}>{ user?.username || object?.username || 'No Name' }</Text>
+								<Text style={[styles.mainText, styles.header]}>{ user?.username || object?.username || '无名称' }</Text>
 							</TouchableOpacity>
 						</View>
 						<FormDivider />
 					</View>
 				)}
-				<FormRow 
-					label={<FormLabel text="Remove User from Ignore List" style={{ color: rawColors.RED_400 }}/> } 
+				<FormRow
+					label={<FormLabel text="从忽略列表移除用户" style={{ color: rawColors.RED_400 }}/> }
 					onPress={() => {
 						navigation.pop()
 						storage?.inputs?.ignoredUserList?.splice(index, 1);

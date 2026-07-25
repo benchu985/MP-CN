@@ -19,20 +19,20 @@ const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, Form
 const customizeableColors = [
 	{
 		id: "textColor",
-		label: "Deleted Message Text Color",
-		subLabel: "Click to customize Deleted Message Text Color",
+		label: "已删除消息文字颜色",
+		subLabel: "点击自定义已删除消息的文字颜色",
 		defaultColor: "#E40303",
 	},
 	{
 		id: "backgroundColor",
-		label: "Deleted Message Background Color",
-		subLabel: "Click to customize Background Color",
+		label: "已删除消息背景颜色",
+		subLabel: "点击自定义背景颜色",
 		defaultColor: "#FF2C2F",
 	},
 	{
 		id: "gutterColor",
-		label: "Deleted Message Background Gutter Color",
-		subLabel: "Click to customize Background Gutter Color",	
+		label: "已删除消息背景侧栏颜色",
+		subLabel: "点击自定义背景侧栏颜色",
 		defaultColor: "#FF2C2F",
 	}
 ]
@@ -60,22 +60,22 @@ export default function ColorPickComponent({ styles }) {
 		if(pref == "semanticColors") {
 			return semanticColors[col];
 		} else {
-			return rawColors[col];			
+			return rawColors[col];
 		}
 	}
-	
+
 	return (<>
 		<View style={[styles.subText]}>
 			{
 				storage?.switches?.useSemRawColors && (<>
 					<FormRow
-						label="Semantic & Raw Colors"
-						subLabel="If you enabled [Use Semantic/Raw Color], you can pick the colors from here"
+						label="语义与原始颜色"
+						subLabel="启用“使用语义/原始颜色”后，可在此选择颜色。"
 						leading={<FormRow.Icon source={getAssetIDByName("ic_audit_log_24px")} />}
 						trailing={FormRow.Arrow}
 						onPress={() =>
 							navigation.push("VendettaCustomPage", {
-								title: "Semantic & Raw Colors",
+								title: "语义与原始颜色",
 								render: () => <SemRawComponent/>,
 							})
 						}
@@ -98,16 +98,16 @@ export default function ColorPickComponent({ styles }) {
 					return (<>
 						<FormRow
 							label={obj?.label}
-							subLabel={obj?.subLabel || "Click to Update"}
+							subLabel={obj?.subLabel || "点击更新"}
 							onPress={whenPressed}
 							trailing={
 								<TouchableOpacity onPress={whenPressed}>
 									<Image
 										source={{ uri: transparentBase64 }}
-										style={{ 
-											width: 32, 
+										style={{
+											width: 32,
 											height: 32,
-											borderRadius: 10, 
+											borderRadius: 10,
 											backgroundColor: storage?.colors[obj.id] || customizeableColors.find(x => x?.id == obj?.id)?.defaultColor || "#000"
 										}}
 									/>
@@ -116,12 +116,12 @@ export default function ColorPickComponent({ styles }) {
 						/>
 					</>)
 				})
-			}			
+			}
 			<View style={styles.container}>
-				<FormRow 
-					style={{ justifyContent: 'center', alignItems: 'center' }} 
-					label={`Preview Style: ${storage?.switches?.darkMode ? "Dark" : "Light"} Mode`}
-					subLabel={`Click to Switch Mode`}
+				<FormRow
+					style={{ justifyContent: 'center', alignItems: 'center' }}
+					label={`预览样式：${storage?.switches?.darkMode ? "深色" : "浅色"}模式`}
+					subLabel={`点击切换模式`}
 					trailing={
 						<FormSwitch
 							value={storage?.switches?.darkMode ?? true}
@@ -132,7 +132,7 @@ export default function ColorPickComponent({ styles }) {
 
 				<View style={[styles.row, styles.border, {overflow: "hidden", marginRight: 10}]}>
 					<View style={
-						{ 
+						{
 							width: "2%",
 							backgroundColor: `${storage.colors.gutterColor}${storage.colors.gutterColorAlpha}`,
 						}
@@ -144,35 +144,35 @@ export default function ColorPickComponent({ styles }) {
 					{
 						// console.log(`${storage.switches.useSemRawColors ? (handleSemRaw(storage?.colors?.semRawColorPrefix) || storage.colors.backgroundColor) : storage.colors.backgroundColor}${storage.colors.backgroundColorAlpha}`)
 					}
-					
+
 					<View style={
-						{ 
-							flex: 1,										
+						{
+							flex: 1,
 							backgroundColor: `${
-								storage.switches.useSemRawColors ? 
+								storage.switches.useSemRawColors ?
 									(handleSemRaw(storage?.colors?.semRawColorPrefix) || storage.colors.backgroundColor) :
 									storage.colors.backgroundColor
 							}${storage.colors.backgroundColorAlpha}`,
-							justifyContent: 'center', 
+							justifyContent: 'center',
 							alignItems: 'center',
 						}
 					}>
 						<Text style={{
-								fontSize: 20, 
+								fontSize: 20,
 								color: storage?.switches?.darkMode ? "black" : "white"
 							}
-						}> Low Effort Normal Example Message </Text>
+						}> 普通示例消息 </Text>
 						<Text style={{
-								fontSize: 20, 
+								fontSize: 20,
 								color: storage.colors.textColor || "#000000"
 							}
-						}> Low Effort Deleted Example Message </Text>									
+						}> 已删除示例消息 </Text>
 					</View>
 				</View>
-				
+
 				<FormRow
-					label="Click to switch input type"
-					subLabel="Switch from slider to number and vise versa"
+					label="点击切换输入方式"
+					subLabel="在滑块和数值输入之间切换"
 					onPress={() => {
 						setUseText(!useText)
 					}}
@@ -181,7 +181,7 @@ export default function ColorPickComponent({ styles }) {
 				{
 					useText ? (<>
 							<FormInput
-								title={`Background Color Alpha: ${BGAlpha}%`}
+								title={`背景颜色透明度：${BGAlpha}%`}
 								keyboardType="numeric"
 								style={{ width: "90%" }}
 								value={`${BGAlpha}`}
@@ -194,7 +194,7 @@ export default function ColorPickComponent({ styles }) {
 							/>
 						</>) : (<>
 							<FormSliderRow
-								label={`Background Color Alpha: ${BGAlpha}%`}
+								label={`背景颜色透明度：${BGAlpha}%`}
 								value={BGAlpha}
 								minVal={0}
 								maxVal={100}
@@ -206,13 +206,13 @@ export default function ColorPickComponent({ styles }) {
 							/>
 						</>)
 				}
-				
+
 				<FormDivider/>
 
 				{
 					useText ? (<>
 							<FormInput
-								title={`Background Gutter Alpha: ${gutterAlpha}%`}
+								title={`背景侧栏透明度：${gutterAlpha}%`}
 								keyboardType="numeric"
 								style={{ width: "90%" }}
 								value={`${gutterAlpha}`}
@@ -225,7 +225,7 @@ export default function ColorPickComponent({ styles }) {
 							/>
 						</>) : (<>
 							<FormSliderRow
-								label={`Background Gutter Alpha: ${gutterAlpha}%`}
+								label={`背景侧栏透明度：${gutterAlpha}%`}
 								value={gutterAlpha}
 								minVal={0}
 								maxVal={100}
@@ -237,7 +237,7 @@ export default function ColorPickComponent({ styles }) {
 							/>
 						</>)
 				}
-			
+
 			</View>
 		</View>
 	</>)
