@@ -8,4 +8,5 @@ test.js
 config.js
 ./config.js
 .eslintrc.js
-tags.txt.build/
+tags.txt
+.build/
