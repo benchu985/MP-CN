@@ -1,4 +1,4 @@
-(function(exports,plugin,_vendetta,metro,components,plugins,toasts,patcher$1,common,storage,utils){'use strict';const { openLazy, hideActionSheet } = metro.findByProps("openLazy", "hideActionSheet");
+(function(exports,plugin,_vendetta,metro,components,plugins,toasts,patcher$1,common,storage,utils){'use strict';const { openLazy, hideActionSheet } = metro.findByProps("openLazy", "hideActionSheet") || {};
 function makeDefaults(object, defaults) {
   if (object != void 0) {
     if (defaults != void 0) {

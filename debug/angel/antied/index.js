@@ -59,7 +59,7 @@
     var Forms = vendetta.ui.components.Forms;
     var General = vendetta.ui.components.General;
     vendetta.ui.components.ErrorBoundary;
-    var { openLazy, hideActionSheet } = findByProps("openLazy", "hideActionSheet");
+    var { openLazy, hideActionSheet } = findByProps("openLazy", "hideActionSheet") || {};
     function makeDefaults(object, defaults) {
       if (object != void 0) {
         if (defaults != void 0) {
@@ -257,6 +257,9 @@
     };
     var Message = findByProps("sendMessage", "startEditMessage");
     var self_edit_default = function() {
+      if (!Message)
+        return function() {
+        };
       return before("startEditMessage", Message, function(args) {
         if (!isEnabled)
           return;
@@ -274,6 +277,9 @@
       console.error("[ANTIED] rowsController not found \u2013 patch will not be applied");
     }
     var update_rows_default = function(deletedMessagesArray) {
+      if (!rowsController)
+        return function() {
+        };
       return before("updateRows", rowsController, function(args) {
         if (isEnabled) {
           if (!args?.length)
@@ -346,6 +352,9 @@
     };
     var MessageRecordUtils = findByProps("updateMessageRecord", "createMessageRecord");
     var createMessageRecord_default = function() {
+      if (!MessageRecordUtils)
+        return function() {
+        };
       return after("createMessageRecord", MessageRecordUtils, function([message], record) {
         if (isEnabled) {
           record.was_deleted = message.was_deleted;
@@ -354,6 +363,9 @@
     };
     var MessageRecord = findByName("MessageRecord", false);
     var messageRecordDefault_default = function() {
+      if (!MessageRecord)
+        return function() {
+        };
       return after("default", MessageRecord, function([props], record) {
         if (isEnabled) {
           record.was_deleted = !!props.was_deleted;
@@ -362,6 +374,9 @@
     };
     var MessageRecordUtils2 = findByProps("updateMessageRecord", "createMessageRecord");
     var updateMessageRecord_default = function() {
+      if (!MessageRecordUtils2)
+        return function() {
+        };
       return instead("updateMessageRecord", MessageRecordUtils2, function([oldRecord, newRecord], orig) {
         if (newRecord.was_deleted) {
           return MessageRecordUtils2.createMessageRecord(newRecord, oldRecord.reactions);
@@ -382,8 +397,11 @@
     var MessageStore2 = findByProps("getMessage", "getMessages");
     var ChannelStore2 = findByProps("getChannel", "getDMFromUserId");
     var ChannelMessages2 = findByProps("_channelMessages");
-    var { ActionSheetRow } = findByProps("ActionSheetRow");
+    var { ActionSheetRow } = findByProps("ActionSheetRow") || {};
     var actionsheet_default = function(deletedMessageArray2) {
+      if (!ActionSheet || !ActionSheetRow)
+        return function() {
+        };
       return before("openLazy", ActionSheet, function([component, args, actionMessage]) {
         if (isEnabled) {
           try {
@@ -829,7 +847,7 @@
     var { ScrollView: ScrollView4, View: View3, Text: Text3, TouchableOpacity: TouchableOpacity3, TextInput: TextInput3, Image: Image3, Animated: Animated3 } = General;
     var { FormLabel: FormLabel2, FormIcon: FormIcon3, FormArrow: FormArrow2, FormRow: FormRow5, FormSwitch: FormSwitch3, FormSwitchRow: FormSwitchRow2, FormSection: FormSection2, FormDivider: FormDivider4, FormInput: FormInput2 } = Forms;
     var useIsFocused = findByName("useIsFocused");
-    var { BottomSheetFlatList } = findByProps("BottomSheetScrollView");
+    var { BottomSheetFlatList } = findByProps("BottomSheetScrollView") || {};
     var UserStore = findByStoreName("UserStore");
     var Profiles = findByProps("showUserProfile");
     getAssetIDByName("ic_add_24px");
@@ -1059,8 +1077,8 @@
       });
     }
     var useIsFocused2 = findByName("useIsFocused");
-    var { BottomSheetFlatList: BottomSheetFlatList2 } = findByProps("BottomSheetScrollView");
-    var { getUser } = findByProps("getUser");
+    var { BottomSheetFlatList: BottomSheetFlatList2 } = findByProps("BottomSheetScrollView") || {};
+    var { getUser } = findByProps("getUser") || {};
     var Add2 = getAssetIDByName("ic_add_24px");
     getAssetIDByName("ic_arrow");
     getAssetIDByName("ic_minus_circle_24px");
@@ -2006,9 +2024,16 @@
       ]
     ];
     var patcher = function() {
-      return patches.forEach(function([fn, args]) {
+      const cleanups = patches.map(function([fn, args]) {
         return fn(...args);
+      }).filter(function(fn) {
+        return typeof fn === "function";
       });
+      return function() {
+        return cleanups.forEach(function(fn) {
+          return fn();
+        });
+      };
     };
     var database = "https://angelix1.github.io/static_list/antied/list.json";
     var antied_default = {
