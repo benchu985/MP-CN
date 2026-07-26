@@ -99,7 +99,18 @@ const patches = [
 
 // helper func
 const patcher = () => {
-	const cleanups = patches.map(([fn, args]) => fn(...args)).filter(fn => typeof fn === "function");
+	const cleanups = [];
+
+	for (const [fn, args] of patches) {
+		try {
+			const cleanup = fn(...args);
+			if (typeof cleanup === "function") cleanups.push(cleanup);
+		}
+		catch (error) {
+			logger.warn("[ANTIED] Skipped an unavailable runtime patch", error);
+		}
+	}
+
 	return () => cleanups.forEach(fn => fn());
 };
 
