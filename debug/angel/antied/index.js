@@ -2024,11 +2024,16 @@
       ]
     ];
     var patcher = function() {
-      const cleanups = patches.map(function([fn, args]) {
-        return fn(...args);
-      }).filter(function(fn) {
-        return typeof fn === "function";
-      });
+      const cleanups = [];
+      for (const [fn, args] of patches) {
+        try {
+          const cleanup = fn(...args);
+          if (typeof cleanup === "function")
+            cleanups.push(cleanup);
+        } catch (error) {
+          logger.warn("[ANTIED] Skipped an unavailable runtime patch", error);
+        }
+      }
       return function() {
         return cleanups.forEach(function(fn) {
           return fn();
