@@ -13,9 +13,11 @@ const ActionSheet = findByProps("openLazy", "hideActionSheet")
 const MessageStore = findByProps("getMessage", "getMessages");
 const ChannelStore = findByProps("getChannel", "getDMFromUserId");
 const ChannelMessages = findByProps("_channelMessages");
-const { ActionSheetRow } = findByProps("ActionSheetRow");
+const { ActionSheetRow } = findByProps("ActionSheetRow") || {};
 
-export default (deletedMessageArray) => before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
+export default (deletedMessageArray) => {
+	if (!ActionSheet || !ActionSheetRow) return () => {};
+	return before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
 	if(isEnabled) {
 		try {
 			const message = actionMessage?.message;
@@ -189,3 +191,4 @@ export default (deletedMessageArray) => before("openLazy", ActionSheet, ([compon
 		}
 	}
 })
+}

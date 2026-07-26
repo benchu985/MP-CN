@@ -19,8 +19,8 @@ function addIcon(i, dr) {
 
 // find stuff
 const useIsFocused = findByName("useIsFocused");
-const { BottomSheetFlatList } = findByProps("BottomSheetScrollView");
-const { getUser } = findByProps('getUser');
+const { BottomSheetFlatList } = findByProps("BottomSheetScrollView") || {};
+const { getUser } = findByProps('getUser') || {};
 
 // Icons idk
 const Add = getAssetIDByName("ic_add_24px");

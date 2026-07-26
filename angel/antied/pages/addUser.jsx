@@ -11,7 +11,7 @@ const { ScrollView, View, Text, TouchableOpacity, TextInput, Image, Animated } =
 const { FormLabel, FormIcon, FormArrow, FormRow, FormSwitch, FormSwitchRow, FormSection, FormDivider, FormInput } = Forms;
 // find stuff
 const useIsFocused = findByName("useIsFocused");
-const { BottomSheetFlatList } = findByProps("BottomSheetScrollView");
+const { BottomSheetFlatList } = findByProps("BottomSheetScrollView") || {};
 const UserStore = findByStoreName("UserStore");
 const Profiles = findByProps("showUserProfile");
 

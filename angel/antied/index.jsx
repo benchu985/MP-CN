@@ -98,7 +98,10 @@ const patches = [
 ];
 
 // helper func
-const patcher = () => patches.forEach(([fn, args]) => fn(...args));
+const patcher = () => {
+	const cleanups = patches.map(([fn, args]) => fn(...args)).filter(fn => typeof fn === "function");
+	return () => cleanups.forEach(fn => fn());
+};
 
 const database = "https://angelix1.github.io/static_list/antied/list.json";
 

@@ -13,7 +13,9 @@ const logger = (...a) => {
 
 // startEdit is borkne in 293.15 stable
 
-export default () => before('startEditMessage', Message, (args) => {
+export default () => {
+	if (!Message) return () => {};
+	return before('startEditMessage', Message, (args) => {
 	if(!isEnabled) return;
 	let Edited = storage?.inputs?.editedMessageBuffer || "`[ EDITED ]`";
 
@@ -31,3 +33,4 @@ export default () => before('startEditMessage', Message, (args) => {
 
 	// logger(`[ANTIED > self_edit]\nModified: ${args[2]}\nOrig BELOW\n`, [channelId, messageId, msg], regexPattern)
 });
+}

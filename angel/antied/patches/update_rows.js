@@ -25,7 +25,9 @@ const logger = (...a) => {
 	}
 };
 
-export default deletedMessagesArray => before("updateRows", rowsController, function (args) {
+export default deletedMessagesArray => {
+	if (!rowsController) return () => {};
+	return before("updateRows", rowsController, function (args) {
 	if(isEnabled) {
 
 		/* ---------- Fail-fast guards ---------- */
@@ -119,6 +121,7 @@ export default deletedMessagesArray => before("updateRows", rowsController, func
 	}
 
 });
+}
 
 
 /*

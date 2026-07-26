@@ -47,7 +47,7 @@ var __antiedBundle = (() => {
   var ErrorBoundary = vendetta.ui.components.ErrorBoundary;
 
   // lib/utility.js
-  var { openLazy, hideActionSheet } = findByProps("openLazy", "hideActionSheet");
+  var { openLazy, hideActionSheet } = findByProps("openLazy", "hideActionSheet") || {};
   function makeDefaults(object, defaults) {
     if (object != void 0) {
       if (defaults != void 0) {
@@ -246,111 +246,131 @@ var __antiedBundle = (() => {
 
   // angel/antied/patches/self_edit.js
   var Message = findByProps("sendMessage", "startEditMessage");
-  var self_edit_default = () => before("startEditMessage", Message, (args) => {
-    if (!isEnabled) return;
-    let Edited = storage?.inputs?.editedMessageBuffer || "`[ EDITED ]`";
-    const DAN = regexEscaper(Edited);
-    const regexPattern = new RegExp(`(?:(?:\\s${DAN}(\\s\\(<t:\\d+:[tTdDfFR]>\\))?\\n{2})|(?:(?:\\s\\(<t:\\d+:[tTdDfFR]>\\) ${DAN}\\n{2})))`, "gm");
-    const [channelId, messageId, msg] = args;
-    const lats = msg.split(regexPattern);
-    const f = lats[lats.length - 1];
-    args[2] = f;
-  });
+  var self_edit_default = () => {
+    if (!Message) return () => {
+    };
+    return before("startEditMessage", Message, (args) => {
+      if (!isEnabled) return;
+      let Edited = storage?.inputs?.editedMessageBuffer || "`[ EDITED ]`";
+      const DAN = regexEscaper(Edited);
+      const regexPattern = new RegExp(`(?:(?:\\s${DAN}(\\s\\(<t:\\d+:[tTdDfFR]>\\))?\\n{2})|(?:(?:\\s\\(<t:\\d+:[tTdDfFR]>\\) ${DAN}\\n{2})))`, "gm");
+      const [channelId, messageId, msg] = args;
+      const lats = msg.split(regexPattern);
+      const f = lats[lats.length - 1];
+      args[2] = f;
+    });
+  };
 
   // angel/antied/patches/update_rows.js
   var rowsController = findByProps("updateRows", "getConstants") || findByProps("updateRows");
   if (!rowsController) {
     console.error("[ANTIED] rowsController not found \u2013 patch will not be applied");
   }
-  var update_rows_default = (deletedMessagesArray) => before("updateRows", rowsController, function(args) {
-    if (isEnabled) {
-      if (!args?.length) return;
-      const raw = args[1];
-      if (!raw) return;
-      let rows;
-      let isString = false;
-      if (typeof raw === "string") {
-        try {
-          rows = JSON.parse(raw);
-          isString = true;
-        } catch {
+  var update_rows_default = (deletedMessagesArray) => {
+    if (!rowsController) return () => {
+    };
+    return before("updateRows", rowsController, function(args) {
+      if (isEnabled) {
+        if (!args?.length) return;
+        const raw = args[1];
+        if (!raw) return;
+        let rows;
+        let isString = false;
+        if (typeof raw === "string") {
+          try {
+            rows = JSON.parse(raw);
+            isString = true;
+          } catch {
+            return;
+          }
+        } else if (Array.isArray(raw)) {
+          rows = raw;
+        } else {
           return;
         }
-      } else if (Array.isArray(raw)) {
-        rows = raw;
-      } else {
-        return;
+        const hasDeleted = rows.some((r) => r?.message && deletedMessagesArray.has(r.message.id));
+        if (!hasDeleted) return;
+        const {
+          colors: { textColor, backgroundColor, backgroundColorAlpha, gutterColor, gutterColorAlpha },
+          switches: { useBackgroundColor, minimalistic, removeDismissButton, overrideIndicator, useIndicatorForDeleted, useEphemeralForDeleted },
+          inputs: { deletedMessageBuffer, customIndicator }
+        } = storage;
+        const toHex = (v, fallback) => {
+          const s = String(v || "").trim();
+          const hex = s.startsWith("#") ? s.slice(1) : s;
+          return /^[0-9a-fA-F]{6}$/.test(hex) ? `#${hex.toUpperCase()}` : fallback;
+        };
+        const bufferSymbol = " \u2022 ";
+        for (const row of rows) {
+          if (row?.type !== 1) continue;
+          const msg = row.message;
+          if (!msg || !deletedMessagesArray.has(msg.id)) continue;
+          if (useIndicatorForDeleted && useEphemeralForDeleted) {
+            msg.ephemeralIndication.content[0].content = `${deletedMessageBuffer}${bufferSymbol}  `;
+          } else if (deletedMessageBuffer) {
+            msg.edited = deletedMessageBuffer;
+          }
+          if (!minimalistic) {
+            msg.textColor = ReactNative.processColor(toHex(textColor, "#E40303"));
+          }
+          if (overrideIndicator) {
+            msg.ephemeralIndication.content = [];
+          } else if (!useIndicatorForDeleted && customIndicator) {
+            msg.ephemeralIndication.content[0].content = `${customIndicator}  `;
+          }
+          if (removeDismissButton && msg.ephemeralIndication?.content) {
+            msg.ephemeralIndication?.content?.splice?.(1, 1);
+          }
+          if (!minimalistic && useBackgroundColor) {
+            row.backgroundHighlight = {
+              backgroundColor: ReactNative.processColor(toHex(backgroundColor, "#FF2C2F") + backgroundColorAlpha),
+              gutterColor: ReactNative.processColor(toHex(gutterColor, "#FF2C2F") + gutterColorAlpha)
+            };
+          }
+        }
+        if (isString) args[1] = JSON.stringify(rows);
+        else args[1] = rows;
+        return args;
       }
-      const hasDeleted = rows.some((r) => r?.message && deletedMessagesArray.has(r.message.id));
-      if (!hasDeleted) return;
-      const {
-        colors: { textColor, backgroundColor, backgroundColorAlpha, gutterColor, gutterColorAlpha },
-        switches: { useBackgroundColor, minimalistic, removeDismissButton, overrideIndicator, useIndicatorForDeleted, useEphemeralForDeleted },
-        inputs: { deletedMessageBuffer, customIndicator }
-      } = storage;
-      const toHex = (v, fallback) => {
-        const s = String(v || "").trim();
-        const hex = s.startsWith("#") ? s.slice(1) : s;
-        return /^[0-9a-fA-F]{6}$/.test(hex) ? `#${hex.toUpperCase()}` : fallback;
-      };
-      const bufferSymbol = " \u2022 ";
-      for (const row of rows) {
-        if (row?.type !== 1) continue;
-        const msg = row.message;
-        if (!msg || !deletedMessagesArray.has(msg.id)) continue;
-        if (useIndicatorForDeleted && useEphemeralForDeleted) {
-          msg.ephemeralIndication.content[0].content = `${deletedMessageBuffer}${bufferSymbol}  `;
-        } else if (deletedMessageBuffer) {
-          msg.edited = deletedMessageBuffer;
-        }
-        if (!minimalistic) {
-          msg.textColor = ReactNative.processColor(toHex(textColor, "#E40303"));
-        }
-        if (overrideIndicator) {
-          msg.ephemeralIndication.content = [];
-        } else if (!useIndicatorForDeleted && customIndicator) {
-          msg.ephemeralIndication.content[0].content = `${customIndicator}  `;
-        }
-        if (removeDismissButton && msg.ephemeralIndication?.content) {
-          msg.ephemeralIndication?.content?.splice?.(1, 1);
-        }
-        if (!minimalistic && useBackgroundColor) {
-          row.backgroundHighlight = {
-            backgroundColor: ReactNative.processColor(toHex(backgroundColor, "#FF2C2F") + backgroundColorAlpha),
-            gutterColor: ReactNative.processColor(toHex(gutterColor, "#FF2C2F") + gutterColorAlpha)
-          };
-        }
-      }
-      if (isString) args[1] = JSON.stringify(rows);
-      else args[1] = rows;
-      return args;
-    }
-  });
+    });
+  };
 
   // angel/antied/patches/createMessageRecord.js
   var MessageRecordUtils = findByProps("updateMessageRecord", "createMessageRecord");
-  var createMessageRecord_default = () => after("createMessageRecord", MessageRecordUtils, function([message], record) {
-    if (isEnabled) {
-      record.was_deleted = message.was_deleted;
-    }
-  });
+  var createMessageRecord_default = () => {
+    if (!MessageRecordUtils) return () => {
+    };
+    return after("createMessageRecord", MessageRecordUtils, function([message], record) {
+      if (isEnabled) {
+        record.was_deleted = message.was_deleted;
+      }
+    });
+  };
 
   // angel/antied/patches/messageRecordDefault.js
   var MessageRecord = findByName("MessageRecord", false);
-  var messageRecordDefault_default = () => after("default", MessageRecord, ([props], record) => {
-    if (isEnabled) {
-      record.was_deleted = !!props.was_deleted;
-    }
-  });
+  var messageRecordDefault_default = () => {
+    if (!MessageRecord) return () => {
+    };
+    return after("default", MessageRecord, ([props], record) => {
+      if (isEnabled) {
+        record.was_deleted = !!props.was_deleted;
+      }
+    });
+  };
 
   // angel/antied/patches/updateMessageRecord.js
   var MessageRecordUtils2 = findByProps("updateMessageRecord", "createMessageRecord");
-  var updateMessageRecord_default = () => instead("updateMessageRecord", MessageRecordUtils2, function([oldRecord, newRecord], orig) {
-    if (newRecord.was_deleted) {
-      return MessageRecordUtils2.createMessageRecord(newRecord, oldRecord.reactions);
-    }
-    return orig.apply(this, [oldRecord, newRecord]);
-  });
+  var updateMessageRecord_default = () => {
+    if (!MessageRecordUtils2) return () => {
+    };
+    return instead("updateMessageRecord", MessageRecordUtils2, function([oldRecord, newRecord], orig) {
+      if (newRecord.was_deleted) {
+        return MessageRecordUtils2.createMessageRecord(newRecord, oldRecord.reactions);
+      }
+      return orig.apply(this, [oldRecord, newRecord]);
+    });
+  };
 
   // .build/antied-shims/ui-assets.js
   var getAssetIDByName = vendetta.ui.assets.getAssetIDByName;
@@ -369,122 +389,126 @@ var __antiedBundle = (() => {
   var MessageStore2 = findByProps("getMessage", "getMessages");
   var ChannelStore2 = findByProps("getChannel", "getDMFromUserId");
   var ChannelMessages2 = findByProps("_channelMessages");
-  var { ActionSheetRow } = findByProps("ActionSheetRow");
-  var actionsheet_default = (deletedMessageArray2) => before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
-    if (isEnabled) {
-      try {
-        const message = actionMessage?.message;
-        if (args !== "MessageLongPressActionSheet" || !message) return;
-        component.then((instance) => {
-          const unpatch2 = after("default", instance, (_, comp) => {
-            try {
-              let someFunc = function(a) {
-                return a?.props?.label?.toLowerCase?.() == "reply";
-              };
-              React2.useEffect(() => () => {
-                unpatch2();
-              }, []);
-              if (storage.debug) console.log(`[ANTIED ActionSheet]`, message);
-              const buttons = findInReactTree(comp, (c) => c?.find?.(someFunc));
-              if (!buttons) return comp;
-              const position = Math.max(
-                buttons.findIndex(someFunc),
-                buttons.length - 1
-              );
-              let originalMessage = null;
-              if (message?.channel_id && message?.id) {
-                originalMessage = MessageStore2.getMessage(message?.channel_id, message?.id);
-                if (!originalMessage) {
-                  const channel = ChannelMessages2.get(message?.channel_id);
-                  originalMessage = channel?.get(message?.id);
+  var { ActionSheetRow } = findByProps("ActionSheetRow") || {};
+  var actionsheet_default = (deletedMessageArray2) => {
+    if (!ActionSheet || !ActionSheetRow) return () => {
+    };
+    return before("openLazy", ActionSheet, ([component, args, actionMessage]) => {
+      if (isEnabled) {
+        try {
+          const message = actionMessage?.message;
+          if (args !== "MessageLongPressActionSheet" || !message) return;
+          component.then((instance) => {
+            const unpatch2 = after("default", instance, (_, comp) => {
+              try {
+                let someFunc = function(a) {
+                  return a?.props?.label?.toLowerCase?.() == "reply";
+                };
+                React2.useEffect(() => () => {
+                  unpatch2();
+                }, []);
+                if (storage.debug) console.log(`[ANTIED ActionSheet]`, message);
+                const buttons = findInReactTree(comp, (c) => c?.find?.(someFunc));
+                if (!buttons) return comp;
+                const position = Math.max(
+                  buttons.findIndex(someFunc),
+                  buttons.length - 1
+                );
+                let originalMessage = null;
+                if (message?.channel_id && message?.id) {
+                  originalMessage = MessageStore2.getMessage(message?.channel_id, message?.id);
+                  if (!originalMessage) {
+                    const channel = ChannelMessages2.get(message?.channel_id);
+                    originalMessage = channel?.get(message?.id);
+                  }
                 }
-              }
-              if (!originalMessage) return comp;
-              const escapedBuffer = regexEscaper(storage?.inputs?.editedMessageBuffer || "`[ EDITED ]`");
-              const separator = new RegExp(escapedBuffer, "gmi");
-              const checkIfBufferExist = separator.test(message.content);
-              if (checkIfBufferExist) {
-                const targetPos = position || 1;
-                buttons.splice(targetPos, 0, /* @__PURE__ */ React2.createElement(
-                  ActionSheetRow,
-                  {
-                    label: "\u6E05\u9664\u7F16\u8F91\u5386\u53F2",
-                    subLabel: `\u7531 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} \u6DFB\u52A0`,
-                    icon: /* @__PURE__ */ React2.createElement(ActionSheetRow.Icon, { source: getAssetIDByName("ic_edit_24px") }),
-                    onPress: () => {
-                      const DAN = escapedBuffer;
-                      const regexPattern = new RegExp(`(?:(?:\\s${DAN}(\\s\\(<t:\\d+:[tTdDfFR]>\\))?\\n{2})|(?:(?:\\s\\(<t:\\d+:[tTdDfFR]>\\) ${DAN}\\n{2})))`, "gm");
-                      const lats = message?.content?.split(regexPattern);
-                      if (storage.debug) {
-                        console.log([
-                          [escapedBuffer],
-                          message?.content?.split(regexPattern),
-                          lats
-                        ]);
-                      }
-                      const targetMessage = lats[lats.length - 1];
-                      FluxDispatcher.dispatch({
-                        type: "MESSAGE_UPDATE",
-                        message: {
-                          ...message,
-                          message_reference: message?.message_reference || message?.messageReference || null,
-                          content: `${targetMessage}`,
-                          guild_id: ChannelStore2.getChannel(originalMessage.channel_id).guild_id
-                        },
-                        otherPluginBypass: true
-                      });
-                      ActionSheet.hideActionSheet();
-                      if (storage?.inputs?.historyToast?.length > 0 || storage?.inputs?.historyToast != "") {
-                        showToast2(storage?.inputs?.historyToast?.toString?.(), getAssetIDByName(storage?.misc?.editHistoryIcon || "ic_edit_24px"));
-                      }
-                    }
-                  }
-                ));
-              }
-              if (storage.debug) console.log(
-                `[ANTIED ActionSheet]`,
-                "useEphemeralForDeleted",
-                !storage?.switches?.useEphemeralForDeleted,
-                "msgExist?",
-                Boolean(deletedMessageArray2.has(message.id))
-              );
-              if (!storage?.switches?.useEphemeralForDeleted && deletedMessageArray2.has(message.id)) {
-                const targetPos = position || 1;
-                buttons.splice(targetPos, 0, /* @__PURE__ */ React2.createElement(
-                  ActionSheetRow,
-                  {
-                    label: "\u79FB\u9664\u5DF2\u5220\u9664\u6D88\u606F",
-                    subLabel: `\u7531 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} \u6DFB\u52A0`,
-                    isDestructive: true,
-                    icon: /* @__PURE__ */ React2.createElement(ActionSheetRow.Icon, { source: getAssetIDByName("ic_edit_24px") }),
-                    onPress: () => {
-                      FluxDispatcher.dispatch({
-                        type: "MESSAGE_DELETE",
-                        guildId: ChannelStore2.getChannel(originalMessage.channel_id).guild_id,
-                        id: message?.id,
-                        channelId: message?.channel_id,
-                        otherPluginBypass: true
-                      });
-                      ActionSheet.hideActionSheet();
-                      if (storage?.inputs?.historyToast?.length > 0 || storage?.inputs?.historyToast != "") {
-                        showToast2(`[ANTIED] \u6D88\u606F\u5DF2\u79FB\u9664`, getAssetIDByName("ic_edit_24px"));
+                if (!originalMessage) return comp;
+                const escapedBuffer = regexEscaper(storage?.inputs?.editedMessageBuffer || "`[ EDITED ]`");
+                const separator = new RegExp(escapedBuffer, "gmi");
+                const checkIfBufferExist = separator.test(message.content);
+                if (checkIfBufferExist) {
+                  const targetPos = position || 1;
+                  buttons.splice(targetPos, 0, /* @__PURE__ */ React2.createElement(
+                    ActionSheetRow,
+                    {
+                      label: "\u6E05\u9664\u7F16\u8F91\u5386\u53F2",
+                      subLabel: `\u7531 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} \u6DFB\u52A0`,
+                      icon: /* @__PURE__ */ React2.createElement(ActionSheetRow.Icon, { source: getAssetIDByName("ic_edit_24px") }),
+                      onPress: () => {
+                        const DAN = escapedBuffer;
+                        const regexPattern = new RegExp(`(?:(?:\\s${DAN}(\\s\\(<t:\\d+:[tTdDfFR]>\\))?\\n{2})|(?:(?:\\s\\(<t:\\d+:[tTdDfFR]>\\) ${DAN}\\n{2})))`, "gm");
+                        const lats = message?.content?.split(regexPattern);
+                        if (storage.debug) {
+                          console.log([
+                            [escapedBuffer],
+                            message?.content?.split(regexPattern),
+                            lats
+                          ]);
+                        }
+                        const targetMessage = lats[lats.length - 1];
+                        FluxDispatcher.dispatch({
+                          type: "MESSAGE_UPDATE",
+                          message: {
+                            ...message,
+                            message_reference: message?.message_reference || message?.messageReference || null,
+                            content: `${targetMessage}`,
+                            guild_id: ChannelStore2.getChannel(originalMessage.channel_id).guild_id
+                          },
+                          otherPluginBypass: true
+                        });
+                        ActionSheet.hideActionSheet();
+                        if (storage?.inputs?.historyToast?.length > 0 || storage?.inputs?.historyToast != "") {
+                          showToast2(storage?.inputs?.historyToast?.toString?.(), getAssetIDByName(storage?.misc?.editHistoryIcon || "ic_edit_24px"));
+                        }
                       }
                     }
-                  }
-                ));
+                  ));
+                }
+                if (storage.debug) console.log(
+                  `[ANTIED ActionSheet]`,
+                  "useEphemeralForDeleted",
+                  !storage?.switches?.useEphemeralForDeleted,
+                  "msgExist?",
+                  Boolean(deletedMessageArray2.has(message.id))
+                );
+                if (!storage?.switches?.useEphemeralForDeleted && deletedMessageArray2.has(message.id)) {
+                  const targetPos = position || 1;
+                  buttons.splice(targetPos, 0, /* @__PURE__ */ React2.createElement(
+                    ActionSheetRow,
+                    {
+                      label: "\u79FB\u9664\u5DF2\u5220\u9664\u6D88\u606F",
+                      subLabel: `\u7531 ${stripVersions(plugin?.manifest?.name) || "ANTIED"} \u6DFB\u52A0`,
+                      isDestructive: true,
+                      icon: /* @__PURE__ */ React2.createElement(ActionSheetRow.Icon, { source: getAssetIDByName("ic_edit_24px") }),
+                      onPress: () => {
+                        FluxDispatcher.dispatch({
+                          type: "MESSAGE_DELETE",
+                          guildId: ChannelStore2.getChannel(originalMessage.channel_id).guild_id,
+                          id: message?.id,
+                          channelId: message?.channel_id,
+                          otherPluginBypass: true
+                        });
+                        ActionSheet.hideActionSheet();
+                        if (storage?.inputs?.historyToast?.length > 0 || storage?.inputs?.historyToast != "") {
+                          showToast2(`[ANTIED] \u6D88\u606F\u5DF2\u79FB\u9664`, getAssetIDByName("ic_edit_24px"));
+                        }
+                      }
+                    }
+                  ));
+                }
+              } catch (e) {
+                showToast2("[ANTIED] \u64CD\u4F5C\u83DC\u5355\u53D1\u751F\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u8C03\u8BD5\u65E5\u5FD7\u4E86\u89E3\u8BE6\u60C5\u3002");
+                console.error("[ANTIED Error > ActionSheet:Component Patch\n", e);
               }
-            } catch (e) {
-              showToast2("[ANTIED] \u64CD\u4F5C\u83DC\u5355\u53D1\u751F\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u8C03\u8BD5\u65E5\u5FD7\u4E86\u89E3\u8BE6\u60C5\u3002");
-              console.error("[ANTIED Error > ActionSheet:Component Patch\n", e);
-            }
+            });
           });
-        });
-      } catch (e) {
-        showToast2("[ANTIED] \u64CD\u4F5C\u83DC\u5355\u53D1\u751F\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u8C03\u8BD5\u65E5\u5FD7\u4E86\u89E3\u8BE6\u60C5\u3002");
-        console.error("[ANTIED Error > ActionSheet Patch\n", e);
+        } catch (e) {
+          showToast2("[ANTIED] \u64CD\u4F5C\u83DC\u5355\u53D1\u751F\u9519\u8BEF\uFF0C\u8BF7\u67E5\u770B\u8C03\u8BD5\u65E5\u5FD7\u4E86\u89E3\u8BE6\u60C5\u3002");
+          console.error("[ANTIED Error > ActionSheet Patch\n", e);
+        }
       }
-    }
-  });
+    });
+  };
 
   // .build/antied-shims/storage.js
   var useProxy = vendetta.storage.useProxy;
@@ -798,7 +822,7 @@ var __antiedBundle = (() => {
   var { ScrollView: ScrollView4, View: View3, Text: Text3, TouchableOpacity: TouchableOpacity3, TextInput: TextInput3, Image: Image3, Animated: Animated3 } = General;
   var { FormLabel: FormLabel2, FormIcon: FormIcon3, FormArrow: FormArrow2, FormRow: FormRow5, FormSwitch: FormSwitch3, FormSwitchRow: FormSwitchRow2, FormSection: FormSection2, FormDivider: FormDivider4, FormInput: FormInput2 } = Forms;
   var useIsFocused = findByName("useIsFocused");
-  var { BottomSheetFlatList } = findByProps("BottomSheetScrollView");
+  var { BottomSheetFlatList } = findByProps("BottomSheetScrollView") || {};
   var UserStore = findByStoreName("UserStore");
   var Profiles = findByProps("showUserProfile");
   var Add = getAssetIDByName("ic_add_24px");
@@ -982,8 +1006,8 @@ var __antiedBundle = (() => {
     return /* @__PURE__ */ React2.createElement(FormIcon4, { style: { opacity: 1 }, source: dr ? i : getAssetIDByName(i) });
   }
   var useIsFocused2 = findByName("useIsFocused");
-  var { BottomSheetFlatList: BottomSheetFlatList2 } = findByProps("BottomSheetScrollView");
-  var { getUser } = findByProps("getUser");
+  var { BottomSheetFlatList: BottomSheetFlatList2 } = findByProps("BottomSheetScrollView") || {};
+  var { getUser } = findByProps("getUser") || {};
   var Add2 = getAssetIDByName("ic_add_24px");
   var Mod2 = getAssetIDByName("ic_arrow");
   var Remove2 = getAssetIDByName("ic_minus_circle_24px");
@@ -1793,7 +1817,10 @@ var __antiedBundle = (() => {
     [updateMessageRecord_default, []],
     [actionsheet_default, [deletedMessageArray]]
   ];
-  var patcher = () => patches.forEach(([fn, args]) => fn(...args));
+  var patcher = () => {
+    const cleanups = patches.map(([fn, args]) => fn(...args)).filter((fn) => typeof fn === "function");
+    return () => cleanups.forEach((fn) => fn());
+  };
   var database = "https://angelix1.github.io/static_list/antied/list.json";
   var antied_default = {
     onLoad: async () => {

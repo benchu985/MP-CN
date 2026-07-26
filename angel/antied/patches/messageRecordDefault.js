@@ -5,8 +5,11 @@ import { isEnabled } from "..";
 
 const MessageRecord = findByName("MessageRecord", false);
 
-export default () => after("default", MessageRecord, ([props], record) => {
+export default () => {
+	if (!MessageRecord) return () => {};
+	return after("default", MessageRecord, ([props], record) => {
 	if(isEnabled) {
 		record.was_deleted = !!props.was_deleted;
 	}
 })
+}
